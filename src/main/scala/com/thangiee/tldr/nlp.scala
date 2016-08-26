@@ -104,7 +104,7 @@ object nlp {
   def extractKeywords(words: RDD[Word]): RDD[RankedWord] = {
     val orderWords = words.sortBy(_.wordIdx) // chronological order
     val collectedWords = orderWords.collect().toVector
-    val filteredWords: RDD[Word] = orderWords.filter(isNounOrAdj)
+    val filteredWords = orderWords.filter(isNounOrAdj)
 
     val nodes: RDD[(VertexId, Word)] = filteredWords.distinctBy(_.id).keyBy(_.id)
     val edges: RDD[Edge[Int]] = filteredWords.flatMap { w =>
@@ -142,7 +142,6 @@ object nlp {
 }
 
 case class Summarization(rankedSents: Vector[RankedSent], phrases: Vector[Phrase]) {
-
   lazy val chronologicalSentsText: Vector[String] = rankedSents.sortBy(_.idx).map(s => Summarization.reformat(s.text))
   lazy val phrasesText           : Vector[String] = phrases.map(_.text).distinct
 }
@@ -169,12 +168,13 @@ object Summarization {
 
 object Main {
   def main(args: Array[String]): Unit = {
-    val conf = new SparkConf().setAppName("Main").setMaster("local[*]")
+    val conf = new SparkConf().setAppName("TL;DR").setMaster("local[*]")
+    conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
     val sc = new SparkContext(conf)
-    sc.setLogLevel("ERROR")
+//    sc.setLogLevel("ERROR")
 
     val proc = new CoreNLPProcessor(withDiscourse = true)
-    val doc = proc.annotate(Source.fromFile("5.txt").getLines().mkString("\n"))
+    val doc = proc.annotate(Source.fromFile("C:\\Users\\Thangiee\\github\\tldr-bot\\example\\articles\\1.txt").getLines().mkString("\n"))
 
     val summ = Summarization(doc, sc)
 

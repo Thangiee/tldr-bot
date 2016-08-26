@@ -150,22 +150,23 @@ object Summarization {
   private val reformat = replace("`` ", "\"") andThen replace(" ''", "\"") andThen replace(" ,", ",") andThen
                          replace(" .", ".") andThen replace(" '", "'") andThen replace(" n't", "n't")
 
-  def apply(doc: Document, sc: SparkContext, summSize: Int = 4): Summarization = {
+  def apply(doc: Document, sc: SparkContext): Summarization = {
     println("Summarizing...")
     val rankedSents: RDD[RankedSent] = nlp.parseDoc(doc).andThen(nlp.summarize)(sc)
-    val topRankedSents = rankedSents.take(summSize)
+    val docWordCount = rankedSents.flatMap(_.words).count()
+    val numOfSent = if (docWordCount < 750) 3 else 4
+
+    val topRankedSents = rankedSents.take(numOfSent)
     val summWords = sc.parallelize(topRankedSents.flatMap(_.words))
+    val summWordCount = summWords.count()
 
     rankedSents.foreach(println)
 
-    println(s"Extracting keywords from top $summSize sentences...")
+    println(s"Extracting keywords from top $numOfSent sentences...")
     val keywords: RDD[RankedWord] = nlp.extractKeywords(summWords)
 
     println("Extracting phrases from keywords...")
     val phrase = nlp.extractPhrases(keywords)
-
-    val docWordCount = rankedSents.flatMap(_.words).count()
-    val summWordCount = summWords.count()
 
     Summarization(docWordCount, summWordCount, topRankedSents.toVector, phrase)
   }

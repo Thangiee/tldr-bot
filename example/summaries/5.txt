@@ -1,6 +1,5 @@
-146 of 607 words (0.7594728171334432% less)
+113 of 607 words (0.8138385502471169% less)
 
 Google's engineers just achieved a milestone in quantum computing : they've produced the first completely scalable quantum simulation of a hydrogen molecule.
 Researchers working with the Google team were able to accurately simulate the energy of hydrogen H2 molecules, and if we can repeat the trick for other molecules, we could see the benefits in everything from solar cells to medicines.
 "While the energies of molecular hydrogen can be computed classically -LRB- albeit inefficiently -RRB-, as one scales up quantum hardware it becomes possible to simulate even larger chemical systems, including classically intractable ones," writes Google Quantum Software Engineer Ryan Babbush.
-Enter Google's universal quantum computer, which deals in qubits -- bits that themselves can be in a state of superposition, representing both 1 and 0 at the same time.

@@ -9,5 +9,6 @@ libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-graphx" % "2.0.0",
   "org.clulab" %% "processors" % "5.9.0",
   "org.clulab" %% "processors" % "5.9.0" classifier "models",
-  "org.typelevel" %% "cats" % "0.7.0"
+  "org.typelevel" %% "cats" % "0.7.0",
+  "com.github.pathikrit" %% "better-files" % "2.16.0"
 )

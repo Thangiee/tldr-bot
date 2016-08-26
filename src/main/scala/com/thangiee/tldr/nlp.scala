@@ -8,7 +8,6 @@ import org.clulab.processors.Document
 import org.clulab.processors.corenlp.CoreNLPProcessor
 
 import scala.collection.Map
-import scala.io.Source
 import scala.language.higherKinds
 
 case class Word(stem: String, tag: String, txt: String, sentIdx: Int, wordIdx: Int) {
@@ -148,7 +147,8 @@ case class Summarization(rankedSents: Vector[RankedSent], phrases: Vector[Phrase
 
 object Summarization {
   private val replace = (old: String, `new`: String) => (_: String).replace(old, `new`)
-  private val reformat = replace("`` ", "\"") andThen replace(" ''", "\"") andThen replace(" ,", ",") andThen replace(" .", ".") andThen replace(" '", "'")
+  private val reformat = replace("`` ", "\"") andThen replace(" ''", "\"") andThen replace(" ,", ",") andThen
+                         replace(" .", ".") andThen replace(" '", "'") andThen replace(" n't", "n't")
 
   def apply(doc: Document, sc: SparkContext, summSize: Int = 4): Summarization = {
     println("Summarizing...")
@@ -166,19 +166,3 @@ object Summarization {
   }
 }
 
-object Main {
-  def main(args: Array[String]): Unit = {
-    val conf = new SparkConf().setAppName("TL;DR").setMaster("local[*]")
-    conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-    val sc = new SparkContext(conf)
-//    sc.setLogLevel("ERROR")
-
-    val proc = new CoreNLPProcessor(withDiscourse = true)
-    val doc = proc.annotate(Source.fromFile("C:\\Users\\Thangiee\\github\\tldr-bot\\example\\articles\\1.txt").getLines().mkString("\n"))
-
-    val summ = Summarization(doc, sc)
-
-    println(summ.phrases.mkString("\n"))
-    println(summ.chronologicalSentsText.mkString("\n"))
-  }
-}

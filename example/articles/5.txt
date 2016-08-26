@@ -1,0 +1,29 @@
+Google's engineers just achieved a milestone in quantum computing: they’ve produced the first completely scalable quantum simulation of a hydrogen molecule.
+
+That’s big news, because it shows similar devices could help us unlock the quantum secrets hidden in the chemistry that surrounds us.
+
+Researchers working with the Google team were able to accurately simulate the energy of hydrogen H2 molecules, and if we can repeat the trick for other molecules, we could see the benefits in everything from solar cells to medicines.
+
+These types of predictions are often impossible for 'classical' computers or take an extremely long time – working out the energy of something like a propane (C3H8) molecule would take a supercomputer in the region of 10 days.
+
+To achieve the feat, Google's engineers teamed up with researchers from Harvard University, Lawrence Berkeley National Labs, UC Santa Barbara, Tufts University, and University College London in the UK.
+
+"While the energies of molecular hydrogen can be computed classically (albeit inefficiently), as one scales up quantum hardware it becomes possible to simulate even larger chemical systems, including classically intractable ones," writes Google Quantum Software Engineer Ryan Babbush.
+
+Chemical reactions are quantum in nature, because they form highly entangled quantum superposition states. In other words, each particle's state can't be described independently of the others, and that causes problems for computers used to dealing in binary values of 1s and 0s.
+
+Enter Google's universal quantum computer, which deals in qubits – bits that themselves can be in a state of superposition, representing both 1 and 0 at the same time.
+
+To run the simulation, the engineers used a supercooled quantum computing circuit called a variational quantum eigensolver (VQE) – essentially a highly advanced modelling system that attempts to mimic our brain's own neural networks on a quantum level.
+
+When the results of the VQE were compared against the actual released energy of the hydrogen molecule, the curves matched almost exactly, as you can see in the graph above.
+
+Babbush explains that going from qualitative and descriptive chemistry simulations to quantitative and predictive ones "could modernise the field so dramatically that the examples imaginable today are just the tip of the iceberg".
+
+We're dealing with the very first steps of modelling reality, and Google says we could start to see applications in all kinds of systems involving chemistry: improved batteries, flexible electronics, new types of materials, and more.
+
+One potential use is modelling the way bacteria produce fertiliser. The way humans produce fertiliser is extremely inefficient in terms of the environment, and costs 1-2 percent of the world's energy per year – so any improvements in understanding the chemical reactions involved could produce massive gains.
+
+It's still early days though, and while we've described Google's hardware as a quantum computer for simplicity's sake, there's still an ongoing debate over whether we've cracked the quantum computing code just yet.
+
+Some say Google's machine is still a prototype, part-quantum computer rather than the real deal. But while the scientists discuss the ins and outs of that argument, at least we're starting to reap the benefits of the technology – and can look forward to a near future where computing power is almost unimaginable.

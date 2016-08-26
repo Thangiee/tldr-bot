@@ -1,11 +1,10 @@
 package com.thangiee.tldr
 
 import cats.implicits._
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.SparkContext
 import org.apache.spark.graphx._
 import org.apache.spark.rdd.RDD
 import org.clulab.processors.Document
-import org.clulab.processors.corenlp.CoreNLPProcessor
 
 import scala.collection.Map
 import scala.language.higherKinds
@@ -140,9 +139,10 @@ object nlp {
   }
 }
 
-case class Summarization(rankedSents: Vector[RankedSent], phrases: Vector[Phrase]) {
+case class Summarization(docWordCount: Long, summWordCount: Long, rankedSents: Vector[RankedSent], phrases: Vector[Phrase]) {
   lazy val chronologicalSentsText: Vector[String] = rankedSents.sortBy(_.idx).map(s => Summarization.reformat(s.text))
   lazy val phrasesText           : Vector[String] = phrases.map(_.text).distinct
+  lazy val summReducePct: Double = 1 - summWordCount.toDouble / docWordCount
 }
 
 object Summarization {
@@ -154,15 +154,20 @@ object Summarization {
     println("Summarizing...")
     val rankedSents: RDD[RankedSent] = nlp.parseDoc(doc).andThen(nlp.summarize)(sc)
     val topRankedSents = rankedSents.take(summSize)
+    val summWords = sc.parallelize(topRankedSents.flatMap(_.words))
+
     rankedSents.foreach(println)
 
     println(s"Extracting keywords from top $summSize sentences...")
-    val keywords: RDD[RankedWord] = nlp.extractKeywords(sc.parallelize(topRankedSents.flatMap(_.words)))
+    val keywords: RDD[RankedWord] = nlp.extractKeywords(summWords)
 
     println("Extracting phrases from keywords...")
     val phrase = nlp.extractPhrases(keywords)
 
-    Summarization(topRankedSents.toVector, phrase)
+    val docWordCount = rankedSents.flatMap(_.words).count()
+    val summWordCount = summWords.count()
+
+    Summarization(docWordCount, summWordCount, topRankedSents.toVector, phrase)
   }
 }
 

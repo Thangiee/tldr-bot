@@ -5,7 +5,6 @@
 (0.51375,National Weather Service)
 (0.44999999999999996,Dominican Republic Sunday)
 (0.4275,Puerto Rico)
-(0.4275,Puerto Rico)
 (0.405,Carribean)
 (0.36375,San Juan)
 (0.3,southeast winds)

@@ -7,8 +7,10 @@ object Example {
   def main(args: Array[String]): Unit = {
     import better.files._
 
-    val conf = new SparkConf().setAppName("TL;DR").setMaster("local[*]")
-    conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+    val conf = new SparkConf()
+      .setAppName("TL;DR")
+      .setMaster("local[*]")
+      .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
     val sc = new SparkContext(conf)
 //    sc.setLogLevel("ERROR")
 
@@ -27,9 +29,10 @@ object Example {
       println(s"Processing ${file.name}...")
       val doc = proc.annotate(file.contentAsString)
       val summ = Summarization(doc, sc)
+      val header = s"${summ.summWordCount} of ${summ.docWordCount} words (${summ.summReducePct}% less)\n\n"
 
       s"./example/phrases/${file.name}".toFile.overwrite(summ.phrases.map(p => (p.score, p.text)).distinct.mkString("\n"))
-      s"./example/summaries/${file.name}".toFile.overwrite(summ.chronologicalSentsText.mkString("\n"))
+      s"./example/summaries/${file.name}".toFile.overwrite(header + summ.chronologicalSentsText.mkString("\n"))
     }
   }
 }

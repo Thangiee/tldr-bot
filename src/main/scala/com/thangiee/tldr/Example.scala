@@ -9,7 +9,7 @@ object Example {
 
     val conf = new SparkConf()
       .setAppName("TL;DR")
-      .setMaster("local[*]")
+      .setMaster("local[4]")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
     val sc = new SparkContext(conf)
 //    sc.setLogLevel("ERROR")
@@ -22,7 +22,11 @@ object Example {
       "./example/articles/3.txt",
       "./example/articles/4.txt",
       "./example/articles/5.txt",
-      "./example/articles/6.txt"
+      "./example/articles/6.txt",
+      "./example/articles/7.txt",
+      "./example/articles/8.txt",
+      "./example/articles/9.txt",
+      "./example/articles/10.txt"
     ).map(_.toFile)
 
     files.foreach { file =>

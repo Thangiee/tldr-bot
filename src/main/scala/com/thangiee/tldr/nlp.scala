@@ -152,7 +152,7 @@ object Summarization {
                          replace("-LRB- ", "(") andThen replace(" -RRB-", ")")
 
   def apply(doc: Document, sc: SparkContext): Summarization = {
-    println("Summarizing...")
+    logger.info("Summarizing...")
     val rankedSents: RDD[RankedSent] = nlp.parseDoc(doc).andThen(nlp.summarize)(sc)
     val docWordCount = rankedSents.flatMap(_.words).count()
     val numOfSent = if (docWordCount < 750) 3 else 4
@@ -161,12 +161,12 @@ object Summarization {
     val summWords = sc.parallelize(topRankedSents.flatMap(_.words))
     val summWordCount = summWords.count()
 
-    rankedSents.foreach(println)
+    rankedSents.foreach(sent => logger.debug(sent.toString))
 
-    println(s"Extracting keywords from top $numOfSent sentences...")
+    logger.info(s"Extracting keywords from top $numOfSent sentences...")
     val keywords: RDD[RankedWord] = nlp.extractKeywords(summWords)
 
-    println("Extracting phrases from keywords...")
+    logger.info("Extracting phrases from keywords...")
     val phrase = nlp.extractPhrases(keywords)
 
     Summarization(docWordCount, summWordCount, topRankedSents.toVector, phrase)

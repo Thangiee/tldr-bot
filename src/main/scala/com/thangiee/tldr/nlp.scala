@@ -148,7 +148,8 @@ case class Summarization(docWordCount: Long, summWordCount: Long, rankedSents: V
 object Summarization {
   private val replace = (old: String, `new`: String) => (_: String).replace(old, `new`)
   private val reformat = replace("`` ", "\"") andThen replace(" ''", "\"") andThen replace(" ,", ",") andThen
-                         replace(" .", ".") andThen replace(" '", "'") andThen replace(" n't", "n't")
+                         replace(" .", ".") andThen replace(" '", "'") andThen replace(" n't", "n't") andThen
+                         replace("-LRB- ", "(") andThen replace(" -RRB-", ")")
 
   def apply(doc: Document, sc: SparkContext): Summarization = {
     println("Summarizing...")

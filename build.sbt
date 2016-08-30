@@ -17,6 +17,10 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-stream" % "2.4.9",
   "net.dean.jraw" % "JRAW" % "0.9.0",
   "com.github.cb372" %% "scalacache-redis" % "0.9.1",
-  "ch.qos.logback" % "logback-classic" % "1.1.7",
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0"
+  "com.chuusai" %% "shapeless" % "2.3.2"
+).map(_.exclude("*", "log"))
+
+libraryDependencies ++= Seq(
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0",
+  "ch.qos.logback" %  "logback-classic" % "1.1.7"
 )

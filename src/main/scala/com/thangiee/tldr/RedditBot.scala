@@ -18,7 +18,6 @@ import net.dean.jraw.paginators.{Sorting, SubredditPaginator, TimePeriod}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.clulab.processors.Document
 import org.clulab.processors.corenlp.CoreNLPProcessor
-import shapeless._
 
 import scala.collection.JavaConversions._
 import scala.concurrent.duration._
@@ -54,14 +53,18 @@ object RedditBot {
 
   val accMng = new net.dean.jraw.managers.AccountManager(reddit)
 
-  val paginator = new SubredditPaginator(reddit, "news", "worldnews")
+  val paginator = new SubredditPaginator(reddit)
+  AppConfig.targetedSubreddits.toList match {
+    case h :: Nil => paginator.setSubreddit(h)
+    case h :: t   => paginator.setSubreddit(h, t: _*)
+    case _        =>
+  }
   paginator.setTimePeriod(TimePeriod.HOUR)
   paginator.setSorting(Sorting.NEW)
-  paginator.setLimit(10)
-
-  val avoidSites = Seq("reddit", "twitter", "imgur")
+  paginator.setLimit(AppConfig.pollingSize)
 
   def main(args: Array[String]): Unit = {
+    import shapeless._
 
     val longPollSubRedditsSrc: Source[SubredditPaginator, Cancellable] =
       Source.tick(0.second, 5.seconds, paginator).logInfo(_ => "POLLING...")
@@ -76,7 +79,7 @@ object RedditBot {
       Flow[Vector[Submission]].via(NewSubmissionFilter(Vector.empty))
 
     val notSelfPostOrAvoidSiteFilter: Flow[Submission, Submission, NotUsed] =
-      Flow[Submission].filter(post => !post.isSelfPost && !avoidSites.exists(post.getUrl.contains))
+      Flow[Submission].filter(post => !post.isSelfPost && !AppConfig.blacklistedSites.exists(post.getUrl.contains))
 
     type Post = ::[Submission, ::[Article, HNil]]
     val extractArticle: Flow[Submission, Post, NotUsed] =

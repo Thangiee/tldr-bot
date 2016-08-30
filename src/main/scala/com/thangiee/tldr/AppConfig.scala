@@ -21,4 +21,8 @@ object AppConfig {
     val id = config.getString("reddit.id")
     val secret = config.getString("reddit.secret")
   }
+
+  val pollingSize = config.getInt("tldrBot.pollingSize")
+  val targetedSubreddits = config.getStringList("tldrBot.targetedSubreddits")
+  val blacklistedSites = config.getStringList("tldrBot.blacklistedSites")
 }

@@ -69,6 +69,8 @@ object RedditBot {
   paginator.setSorting(Sorting.NEW)
   paginator.setLimit(AppConfig.pollingSize)
 
+  system.scheduler.schedule(55.minute, 55.minute, () => reddit.authenticate(reddit.getOAuthHelper.easyAuth(credentials)))
+
   def main(args: Array[String]): Unit = {
     import shapeless._
 

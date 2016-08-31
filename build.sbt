@@ -16,13 +16,12 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-stream" % "2.4.9",
   "net.dean.jraw" % "JRAW" % "0.9.0",
   "com.github.cb372" %% "scalacache-redis" % "0.9.1",
-  "com.chuusai" %% "shapeless" % "2.3.2"
-).map(_.exclude("*", "log"))
-
-libraryDependencies ++= Seq(
+  "com.chuusai" %% "shapeless" % "2.3.2",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0",
   "ch.qos.logback" %  "logback-classic" % "1.1.7"
-)
+).map(_.exclude("org.slf4j", "slf4j-log4j12"))
+
+
 
 mainClass in Compile := Some("com.thangiee.tldr.RedditBot")
 enablePlugins(JavaAppPackaging)

@@ -32,6 +32,7 @@ object RedditBot {
   // setup Akka
   implicit val system       = ActorSystem()
   implicit val materializer = ActorMaterializer(ActorMaterializerSettings(system).withAutoFusing(false).withSupervisionStrategy(decider))
+  implicit val exeCtx       = system.dispatcher
 
   // setup Redis
   implicit val scalaCache   = ScalaCache(RedisCache(AppConfig.redis.host, AppConfig.redis.port))

@@ -29,28 +29,34 @@ object RedditBot {
     error => error.printStackTrace(); Supervision.Resume
   }
 
+  // setup Akka
   implicit val system       = ActorSystem()
   implicit val materializer = ActorMaterializer(ActorMaterializerSettings(system).withAutoFusing(false).withSupervisionStrategy(decider))
+
+  // setup Redis
   implicit val scalaCache   = ScalaCache(RedisCache(AppConfig.redis.host, AppConfig.redis.port))
 
+  // setup Spark
   val conf = new SparkConf()
     .setAppName("TL;DR")
     .setMaster("local[4]")
     .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
   val sc   = new SparkContext(conf)
 
+  // setup Core-NLP
   val proc = new CoreNLPProcessor(withDiscourse = false)
-  proc.annotate("a") // load this now, takes a while for first annotate
+  proc.annotate("a") // load this now, takes a while for first annotate run
 
-  val textApiClient = new TextAPIClient(AppConfig.textAnalysis.appId, AppConfig.textAnalysis.appKey)
-  val builder       = ExtractParams.newBuilder().setBestImage(false)
 
-  val credentials = Credentials.script(AppConfig.reddit.user, AppConfig.reddit.passwd, AppConfig.reddit.id, AppConfig.reddit.secret)
-  val agent       = UserAgent.of("desktop", "com.thangiee.tldr", "v0.1.0", "tldr-b0t")
-  val reddit      = new RedditClient(agent)
-  val authData    = reddit.getOAuthHelper.easyAuth(credentials)
-  reddit.authenticate(authData)
+  // setup text analysis to extract article text
+  val textApiClient    = new TextAPIClient(AppConfig.textAnalysis.appId, AppConfig.textAnalysis.appKey)
+  val articleExtractor = ExtractParams.newBuilder().setBestImage(false)
 
+  // setup reddit api wrapper
+  val credentials   = Credentials.script(AppConfig.reddit.user, AppConfig.reddit.passwd, AppConfig.reddit.id, AppConfig.reddit.secret)
+  val agent         = UserAgent.of("desktop", "com.thangiee.tldr", "v0.1.0", "tldr-b0t")
+  val reddit        = new RedditClient(agent)
+  reddit.authenticate(reddit.getOAuthHelper.easyAuth(credentials))
   val accMng = new net.dean.jraw.managers.AccountManager(reddit)
 
   val paginator = new SubredditPaginator(reddit)
@@ -84,8 +90,8 @@ object RedditBot {
     type Post = ::[Submission, ::[Article, HNil]]
     val extractArticle: Flow[Submission, Post, NotUsed] =
       Flow[Submission].map(post => {
-        builder.setUrl(new URL(post.getUrl))
-        val article = textApiClient.extract(builder.build())
+        articleExtractor.setUrl(new URL(post.getUrl))
+        val article = textApiClient.extract(articleExtractor.build())
         post :: article :: HNil
       })
 

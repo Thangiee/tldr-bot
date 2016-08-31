@@ -22,6 +22,10 @@ object AppConfig {
     val secret = config.getString("reddit.secret")
   }
 
+  object spark {
+    val master = config.getString("spark.master")
+  }
+
   val pollingSize = config.getInt("tldrBot.pollingSize")
   val targetedSubreddits = config.getStringList("tldrBot.targetedSubreddits")
   val blacklistedSites = config.getStringList("tldrBot.blacklistedSites")

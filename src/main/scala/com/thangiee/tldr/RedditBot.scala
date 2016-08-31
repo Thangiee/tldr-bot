@@ -39,7 +39,7 @@ object RedditBot {
   // setup Spark
   val conf = new SparkConf()
     .setAppName("TL;DR")
-    .setMaster("local[4]")
+    .setMaster(AppConfig.spark.master)
     .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
   val sc   = new SparkContext(conf)
 
